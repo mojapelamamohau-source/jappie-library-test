@@ -1,0 +1,33 @@
+CREATE DATABASE IF NOT EXISTS jappie_library;
+USE jappie_library;
+
+CREATE TABLE IF NOT EXISTS books (
+  book_id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(150) NOT NULL,
+  author VARCHAR(100) NOT NULL,
+  genre VARCHAR(80) NOT NULL,
+  isbn VARCHAR(30) NOT NULL UNIQUE,
+  quantity INT NOT NULL DEFAULT 0,
+  is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  membership_id VARCHAR(50) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('Admin','User') NOT NULL DEFAULT 'User',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS transactions (
+  transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+  book_id INT NOT NULL,
+  user_id INT NULL,
+  transaction_type ENUM('ADD','BORROW','RETURN') NOT NULL,
+  quantity INT NOT NULL,
+  transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_transaction_book FOREIGN KEY (book_id) REFERENCES books(book_id),
+  CONSTRAINT fk_transaction_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
